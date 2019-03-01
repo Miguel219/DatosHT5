@@ -12,12 +12,14 @@ TIMES = [] #Todos los tiempos
 SEED = 8 #Semilla para random
 random.seed(SEED)
 
-for i in PROCESS:
-    
-
 
 env = simpy.Environment()
 CPU = simpy.Resource(env, capacity= CAPACITY)
+RAMMemory = simpy.Container(env,init=MEMORY,capacity=MEMORY)
+
+for i in range(PROCESS):
+    simulationTime = random.expovariate(1.0/INTERVAL)
+    
 env.run()
 
 
