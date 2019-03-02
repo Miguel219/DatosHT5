@@ -15,9 +15,15 @@ def OperatingSystem(env,simulationTime,processName,simulationMemory,simulationIn
     entranceTime = env.now
     #Pasamos a la etapa ready
     #Obtiene la memoria de nuestra RAM necesaria para el proceso
+    #Si no hay memoria suficiente va a WAIT
+    while(RAMMemory.level<simulationMemory):
+        with WAIT.request() as request:
+                        yield request
+                        yield env.timeout(1) 
+      
     yield RAMMemory.get(simulationMemory)
-    print("/tSe ha obtenido la memoria %s en tiempo %s" %(simulationMemory,env.now))
-    while simulationInstructions > 0:
+    print("\tSe ha obtenido la memoria %s en tiempo %s" %(simulationMemory,env.now))
+    while (simulationInstructions > 0) :
         #Se realizan tres instrucciones
         simulationInstructions = simulationInstructions - INSTRUCTIONS
         yield env.timeout(1)
@@ -29,7 +35,7 @@ def OperatingSystem(env,simulationTime,processName,simulationMemory,simulationIn
                         yield env.timeout(1)      
         #Pasamos a la etapa Terminated
         yield RAMMemory.put(simulationMemory)
-        print("/tSe ha regresado la memoria %s a la RAM en tiempo %s" %(simulationMemory,env.now))
+        print("\tSe ha regresado la memoria %s a la RAM en tiempo %s" %(simulationMemory,env.now))
         #Tiempo tardado para el proceso total
         ProcessTime= (env.now-entranceTime)
         #Se guarda el tiempo tardado del proceso para analisis de datos
@@ -70,7 +76,6 @@ def main():
 
     print("Procesos Terminados")
     print("El tiempo total para %s procesos fue de %.2f, el tiempo por proceso promedio fue de %.2f con desviacion estandar de %.2f" %(PROCESS, TOTALTIME,MeanTime ,StdevTime))
-
     
 main()
 
